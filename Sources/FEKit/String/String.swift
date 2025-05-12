@@ -9,6 +9,7 @@ import Foundation
 
 /// String utilities
 extension String {
+
   /// Creates a String from the specified sequence of UTF-16 code units
   /// - Parameter charCode: Array of UTF-16 code unit values
   /// - Returns: A String created by using the specified sequence of UTF-16 code units
@@ -226,7 +227,7 @@ extension String {
   /// - Parameter other: The string to compare to
   /// - Parameter locale: The locale to use for comparison
   /// - Parameter options: The options to use for comparison
-  /// - Returns: A value indicating the lexical relationship between the two strings
+  /// - Returns: A ComparisonResult indicating the lexical relationship between the two strings
   public func localeCompare(
     _ other: String, locale: Locale? = nil, options: String.CompareOptions = []
   ) -> ComparisonResult {
@@ -234,7 +235,88 @@ extension String {
     let comparisonLocale = locale ?? Locale.current
 
     return self.compare(other, options: options, range: nil, locale: comparisonLocale)
+  }
 
+  public enum NormalizationForm: String {
+    case NFC
+    case NFD
+    case NFKC
+    case NFKD
+  }
+
+  /// Normalizes the string to the specified form
+  /// - Parameter form: The form to normalize the string to
+  /// - Returns: The normalized string
+  public func normalize(_ form: NormalizationForm = .NFC) -> String {
+    switch form {
+    case .NFC:
+      return self.precomposedStringWithCanonicalMapping
+    case .NFD:
+      return self.decomposedStringWithCanonicalMapping
+    case .NFKC:
+      return self.precomposedStringWithCompatibilityMapping
+    case .NFKD:
+      return self.decomposedStringWithCompatibilityMapping
+    }
+  }
+
+  public func padEnd(_ targetLength: Int, padString: String = " ") -> String {
+    let count = self.count
+    if count >= targetLength {
+      return self
+    }
+
+    let padLength = targetLength - count
+    let repeatPadString: Int = padLength / padString.length
+
+    var paddedString = self + padString.repeat(repeatPadString)
+
+    if paddedString.count < targetLength {
+      let remainingLength = targetLength - paddedString.count
+      paddedString += padString.slice(0, remainingLength)
+    }
+    return paddedString
+  }
+
+  /// Extracts a section of a string and returns it as a new string
+  /// - Parameters:
+  ///   - start: The index to the beginning of the specified portion of the string (inclusive)
+  ///   - end: The index to the end of the specified portion of the string (exclusive)
+  /// - Returns: A new string containing the extracted section of the string
+  public func slice(_ start: Int, _ end: Int? = nil) -> String {
+    let length = self.count
+
+    // Handle start index, including negative indices
+    var adjustedStart = start
+    if start < 0 {
+      adjustedStart = max(length + start, 0)
+    } else {
+      adjustedStart = min(start, length)
+    }
+
+    // Handle end index, including negative indices and nil
+    var adjustedEnd = end ?? length
+    if adjustedEnd < 0 {
+      adjustedEnd = max(length + adjustedEnd, 0)
+    } else {
+      adjustedEnd = min(adjustedEnd, length)
+    }
+
+    // If start is greater than or equal to end, return empty string
+    if adjustedStart >= adjustedEnd {
+      return ""
+    }
+
+    // Calculate the string indices
+    let startIndex = self.index(self.startIndex, offsetBy: adjustedStart)
+    let endIndex = self.index(self.startIndex, offsetBy: adjustedEnd)
+
+    // Return the substring
+    return String(self[startIndex..<endIndex])
+  }
+
+  public func `repeat`(_ count: Int) -> String {
+    return String(repeating: self, count: count)
   }
 
   public var length: Int {

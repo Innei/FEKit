@@ -141,6 +141,47 @@ final class StringTests: XCTestCase {
     XCTAssertEqual(str.localeCompare("cafe", options: .widthInsensitive), .orderedDescending)
   }
 
+  func testNormalize() {
+    XCTAssertEqual("café".normalize(), "café")
+    XCTAssertEqual("café".normalize(.NFD), "café")
+    XCTAssertEqual("café".normalize(.NFKC), "café")
+    XCTAssertEqual("café".normalize(.NFKD), "café")
+    XCTAssertEqual("café".normalize(.NFC), "café")
+
+    let name1 = "\u{0041}\u{006d}\u{00e9}\u{006c}\u{0069}\u{0065}"
+    let name2 = "\u{0041}\u{006d}\u{0065}\u{0301}\u{006c}\u{0069}\u{0065}"
+
+    XCTAssertEqual(name1.normalize(), "Amélie")
+    XCTAssertEqual(name2.normalize(), "Amélie")
+
+    let str = "e\u{0301}"
+    XCTAssertEqual(str.normalize(.NFC), "é")
+    XCTAssertEqual(str.normalize(.NFD), "é")
+  }
+
+  func testPadEnd() {
+    XCTAssertEqual("Hello".padEnd(10), "Hello     ")
+    XCTAssertEqual("Hello".padEnd(10, padString: "X"), "HelloXXXXX")
+    XCTAssertEqual("Hello".padEnd(6, padString: "X"), "HelloX")
+    XCTAssertEqual("Hello".padEnd(6, padString: "XAA"), "HelloX")
+  }
+
+  func testRepeat() {
+    XCTAssertEqual("Hello".repeat(3), "HelloHelloHello")
+    XCTAssertEqual("Hello".repeat(0), "")
+    _ = XCTExpectFailure {
+      "Hello".repeat(-1)
+    }
+  }
+
+  func testSlice() {
+    XCTAssertEqual("Hello".slice(0, 5), "Hello")
+    XCTAssertEqual("Hello".slice(0, 10), "Hello")
+    XCTAssertEqual("Hello".slice(0, -1), "Hell")
+    XCTAssertEqual("Hello".slice(0, -10), "")
+    XCTAssertEqual("Hello".slice(0, -10), "")
+  }
+
   func testLength() {
     XCTAssertEqual("Hello".length, 5)
     XCTAssertEqual("".length, 0)
