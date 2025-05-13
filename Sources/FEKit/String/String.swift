@@ -319,6 +319,39 @@ extension String {
     return String(repeating: self, count: count)
   }
 
+  /// Removes whitespace from both ends of a string
+  /// - Returns: A new string with whitespace removed from both ends
+  func trim() -> String {
+    // 使用 Unicode 空白字符集
+    return self.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+
+  /// Removes whitespace from the beginning of a string
+  /// - Returns: A new string with whitespace removed from the beginning
+  func trimStart() -> String {
+    // 从开头移除空白字符
+    var start = self.startIndex
+    while start < self.endIndex, self[start].isWhitespace || self[start].isNewline {
+      start = self.index(after: start)
+    }
+    return String(self[start...])
+  }
+
+  /// Removes whitespace from the end of a string
+  /// - Returns: A new string with whitespace removed from the end
+  func trimEnd() -> String {
+    // 从结尾移除空白字符
+    var end = self.endIndex
+    while end > self.startIndex {
+      let prev = self.index(before: end)
+      if self[prev].isWhitespace || self[prev].isNewline {
+        end = prev
+      } else {
+        break
+      }
+    }
+    return String(self[..<end])
+  }
   public var length: Int {
     return self.count
   }

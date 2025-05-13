@@ -182,6 +182,32 @@ final class StringTests: XCTestCase {
     XCTAssertEqual("Hello".slice(0, -10), "")
   }
 
+  func testTrim() {
+    XCTAssertEqual("Hello".trim(), "Hello")
+    XCTAssertEqual("Hello ".trim(), "Hello")
+    XCTAssertEqual(" Hello".trim(), "Hello")
+    XCTAssertEqual(" Hello ".trim(), "Hello")
+    XCTAssertEqual(" Hello ".trim(), "Hello")
+    XCTAssertEqual(" Hello ".trim(), "Hello")
+    XCTAssertEqual(" Hello ".trim(), "Hello")
+  }
+
+  func testTrimStart() {
+    XCTAssertEqual("Hello".trimStart(), "Hello")
+    XCTAssertEqual("Hello ".trimStart(), "Hello ")
+    XCTAssertEqual(" Hello".trimStart(), "Hello")
+    XCTAssertEqual(" Hello ".trimStart(), "Hello ")
+  }
+
+  func testTrimEnd() {
+    XCTAssertEqual("Hello".trimEnd(), "Hello")
+    XCTAssertEqual("Hello ".trimEnd(), "Hello")
+    XCTAssertEqual("Hello".trimEnd(), "Hello")
+    XCTAssertEqual("Hello".trimEnd(), "Hello")
+    XCTAssertEqual("Hello".trimEnd(), "Hello")
+    XCTAssertEqual("Hello".trimEnd(), "Hello")
+  }
+
   func testLength() {
     XCTAssertEqual("Hello".length, 5)
     XCTAssertEqual("".length, 0)
